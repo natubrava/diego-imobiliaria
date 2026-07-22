@@ -1,0 +1,16 @@
+# Credenciais e arquivos locais
+API Diego chaves.txt
+.env
+.env.*
+*.local
+
+# Arquivos temporários
+Thumbs.db
+.DS_Store
+node_modules/
+dist/
+
+# Fontes privadas usadas na migração (não publicar no GitHub)
+data/
+LOCACAO ANUAL 2026.jpeg
+diegoenviouprintdealgunsimoveisqvende*.jpeg
