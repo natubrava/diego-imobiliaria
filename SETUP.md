@@ -1,5 +1,7 @@
 # Diego Imóveis — instalação da versão 2
 
+> Para IDs, contas, URLs, localização das credenciais e estado atual da publicação, consulte `CONTEXTO-IA.md`. Valores secretos ficam somente nas Propriedades do Apps Script, no chaveiro da ferramenta correspondente ou em variáveis temporárias de ambiente.
+
 ## Antes de publicar
 
 1. Revogue o token do GitHub e a chave do Resend usados pela versão antiga. Eles estavam gravados em arquivos do projeto e devem ser considerados comprometidos.

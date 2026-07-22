@@ -1,5 +1,8 @@
 # Credenciais e arquivos locais
 API Diego chaves.txt
+CREDENCIAIS-LOCAL.md
+CONTEXTO-PRIVADO.md
+*.secrets.md
 .env
 .env.*
 *.local
