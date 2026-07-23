@@ -1,10 +1,10 @@
-import { renderDashboard } from './dashboard.js';
-import { renderLocacoes, openLocacaoModal } from './imoveis.js';
-import { renderFinanceiro } from './pagamentos.js';
-import { renderVendas, openVendaModal } from './vendas.js';
-import { renderConfiguracoes } from './configuracoes.js';
-import { clearCache, consumePrivateAccessLink, ping } from './api.js';
-import { closeModal, escHtml, openModal, renderIcons, toast } from './utils.js';
+import { renderDashboard } from './dashboard.js?v=20260723-1';
+import { renderLocacoes, openLocacaoModal } from './imoveis.js?v=20260723-1';
+import { renderFinanceiro } from './pagamentos.js?v=20260723-1';
+import { renderVendas, openVendaModal } from './vendas.js?v=20260723-1';
+import { renderConfiguracoes } from './configuracoes.js?v=20260723-1';
+import { clearCache, consumePrivateAccessLink, ping } from './api.js?v=20260723-1';
+import { closeModal, escHtml, openModal, renderIcons, toast } from './utils.js?v=20260723-1';
 
 const routes = {
   dashboard: { title: 'Visão geral', eyebrow: 'Central de gestão', render: renderDashboard },

@@ -1,5 +1,5 @@
-import * as api from './api.js';
-import { closeModal, debounce, escHtml, formatCurrency, normalizeText, openModal, parseMoney, renderIcons, setButtonBusy, statusBadge, toast } from './utils.js';
+import * as api from './api.js?v=20260723-1';
+import { closeModal, debounce, escHtml, formatCurrency, normalizeText, openModal, parseMoney, renderIcons, setButtonBusy, statusBadge, toast } from './utils.js?v=20260723-1';
 
 let listings = [];
 
