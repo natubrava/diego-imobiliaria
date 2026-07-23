@@ -10,6 +10,30 @@ export const getAccessToken = () => localStorage.getItem(TOKEN_KEY) || '';
 export const setAccessToken = token => token ? localStorage.setItem(TOKEN_KEY, token.trim()) : localStorage.removeItem(TOKEN_KEY);
 export const clearCache = () => cache.clear();
 
+export function readAccessTokenFromHash(hash = '') {
+  const value = String(hash).replace(/^#/, '');
+  if (!value.startsWith('acesso=')) return '';
+  try {
+    return new URLSearchParams(value).get('acesso')?.trim() || '';
+  } catch {
+    return '';
+  }
+}
+
+export function consumePrivateAccessLink() {
+  const token = readAccessTokenFromHash(location.hash);
+  if (!token) return false;
+  setAccessToken(token);
+  history.replaceState(null, '', `${location.pathname}${location.search}#dashboard`);
+  return true;
+}
+
+export function getPrivateAccessLink() {
+  const token = getAccessToken();
+  if (!token) return '';
+  return `${location.origin}${location.pathname}#acesso=${encodeURIComponent(token)}`;
+}
+
 async function request(action, { data, params = {}, method = 'GET', fresh = false } = {}) {
   const url = getApiUrl();
   if (!url) throw new Error('Conecte o sistema ao Google Apps Script nas Configurações.');

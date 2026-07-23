@@ -15,8 +15,9 @@ export async function renderConfiguracoes(container) {
         </section>
         <section class="settings-card"><h2>Conexão com a base</h2><p>A URL identifica a implantação do Apps Script. O código de acesso evita que desconhecidos consultem ou alterem a planilha.</p>
           <div class="connection-panel"><i style="background:${online?'var(--success)':'var(--danger)'}"></i><div><strong>${online?'Conexão funcionando':'Não foi possível conectar'}</strong><span>${online?'Dados sincronizados com o Google Sheets.':'Revise a URL, o código e a implantação.'}</span></div></div>
-          <div class="form-grid"><div class="field"><label>URL do Web App</label><input id="cfgUrl" type="url" value="${escHtml(api.getApiUrl())}"></div><div class="field"><label>Código de acesso</label><input id="cfgToken" type="password" value="${escHtml(api.getAccessToken())}" placeholder="Definido nas propriedades do script"><small class="field-hint">Fica salvo apenas neste navegador.</small></div></div>
-          <div style="display:flex;gap:8px;margin-top:16px"><button class="primary-button" id="saveConnection"><i data-lucide="plug-zap"></i>Salvar e testar</button><button class="ghost-button" id="setupSystem"><i data-lucide="wand-sparkles"></i>Preparar planilha</button></div>
+          <div class="form-grid"><div class="field"><label>URL do Web App</label><input id="cfgUrl" type="url" value="${escHtml(api.getApiUrl())}"></div><div class="field"><label>Código de acesso</label><input id="cfgToken" type="password" value="${escHtml(api.getAccessToken())}" placeholder="Definido nas propriedades do script"><small class="field-hint">O mesmo código funciona em todos os computadores.</small></div></div>
+          <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><button class="primary-button" id="saveConnection"><i data-lucide="plug-zap"></i>Salvar e testar</button><button class="ghost-button" id="copyAccessLink"><i data-lucide="link"></i>Copiar link de acesso</button><button class="ghost-button" id="setupSystem"><i data-lucide="wand-sparkles"></i>Preparar planilha</button></div>
+          <div class="callout warning" style="margin-top:14px"><i data-lucide="shield-alert"></i><div>O link privado entra automaticamente em qualquer computador. Envie apenas ao Diego: quem tiver esse link poderá acessar o sistema.</div></div>
         </section>
       </div>
       <div class="stack">
@@ -39,6 +40,16 @@ function bind(container) {
     const button=event.currentTarget; api.setApiUrl(container.querySelector('#cfgUrl').value); api.setAccessToken(container.querySelector('#cfgToken').value); setButtonBusy(button,true,'Testando…');
     try { api.clearCache(); await api.ping(); toast('Conexão salva e funcionando.','success'); window.dispatchEvent(new CustomEvent('app:connection',{detail:true})); window.dispatchEvent(new CustomEvent('app:refresh')); }
     catch(error){ toast(error.message,'error'); window.dispatchEvent(new CustomEvent('app:connection',{detail:false})); setButtonBusy(button,false); }
+  };
+  container.querySelector('#copyAccessLink').onclick = async () => {
+    const link = api.getPrivateAccessLink();
+    if (!link) return toast('Salve primeiro o código de acesso.','error');
+    try {
+      await navigator.clipboard.writeText(link);
+      toast('Link privado copiado. Envie somente ao Diego.','success');
+    } catch {
+      toast('O navegador bloqueou a cópia. Abra o arquivo privado salvo na pasta do projeto.','error');
+    }
   };
   container.querySelector('#saveConfig').onclick = async event => { const button=event.currentTarget; setButtonBusy(button,true); try { await api.saveConfig({ emailAlerta:container.querySelector('#cfgEmail').value.trim(), diasAntecedencia:Number(container.querySelector('#cfgDueDays').value), diasRenovacao:Number(container.querySelector('#cfgRenewDays').value), alertasAtivos:container.querySelector('#cfgAlerts').checked }); toast('Alertas atualizados.','success'); setButtonBusy(button,false); } catch(error){ toast(error.message,'error'); setButtonBusy(button,false); } };
   container.querySelector('#testAlerts').onclick = async event => { const button=event.currentTarget; setButtonBusy(button,true,'Verificando…'); try { const result=await api.runAlertCheck(); toast(result.sent?'Resumo enviado para o e-mail configurado.':'Nenhum alerta precisava ser enviado hoje.','success'); } catch(error){ toast(error.message,'error'); } setButtonBusy(button,false); };

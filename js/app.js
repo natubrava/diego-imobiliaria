@@ -3,8 +3,8 @@ import { renderLocacoes, openLocacaoModal } from './imoveis.js';
 import { renderFinanceiro } from './pagamentos.js';
 import { renderVendas, openVendaModal } from './vendas.js';
 import { renderConfiguracoes } from './configuracoes.js';
-import { clearCache, ping } from './api.js';
-import { closeModal, escHtml, openModal, renderIcons } from './utils.js';
+import { clearCache, consumePrivateAccessLink, ping } from './api.js';
+import { closeModal, escHtml, openModal, renderIcons, toast } from './utils.js';
 
 const routes = {
   dashboard: { title: 'Visão geral', eyebrow: 'Central de gestão', render: renderDashboard },
@@ -77,6 +77,7 @@ window.addEventListener('app:refresh', () => navigate(location.hash, true));
 window.addEventListener('app:connection', event => setConnection(event.detail));
 
 document.addEventListener('DOMContentLoaded', () => {
+  const accessActivated = consumePrivateAccessLink();
   renderIcons();
   document.getElementById('menuBtn').onclick = () => {
     document.getElementById('sidebar').classList.add('open');
@@ -94,4 +95,5 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   navigate(location.hash || '#dashboard');
   checkConnection();
+  if (accessActivated) toast('Acesso ativado neste computador.','success');
 });

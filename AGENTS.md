@@ -13,6 +13,7 @@ Antes de alterar este projeto, leia nesta ordem:
 - Não recupere registros da base antiga para a base ativa. As abas `Backup_*` existem apenas para contingência.
 - Nunca mostre valores de tokens, chaves ou credenciais em respostas, logs, commits ou chamadas de ferramenta.
 - Nunca publique `API Diego chaves.txt`, `CREDENCIAIS-LOCAL.md`, imagens recebidas ou a pasta `data/`.
+- Nunca publique `ACESSO-DIEGO-PRIVADO.url` ou qualquer link contendo `#acesso=`.
 - O `APP_TOKEN` fica nas Propriedades do script do Google Apps Script. Não duplique seu valor no código.
 - Antes de qualquer publicação, confirme o repositório e a conta de destino. O repositório original atualmente concede apenas leitura às contas locais conhecidas.
 - Preserve alterações do usuário e faça backup antes de migrações destrutivas.
@@ -30,4 +31,5 @@ Antes de alterar este projeto, leia nesta ordem:
 - Repositório oficial: `https://github.com/natubrava/diego-imobiliaria`.
 - Frontend oficial publicado via GitHub Pages: `https://natubrava.github.io/diego-imobiliaria/`.
 - O endereço `diegogalafassi.github.io/imobiliaria/` é legado e pode continuar exibindo a versão antiga.
-- O `APP_TOKEN` precisa ser informado uma vez em cada navegador autorizado e nunca deve ser incluído no repositório.
+- O `APP_TOKEN` precisa ser ativado uma vez em cada navegador autorizado e nunca deve ser incluído no repositório.
+- Para novos computadores, use o mesmo link privado salvo localmente em `ACESSO-DIEGO-PRIVADO.url`; não gere tokens diferentes por dispositivo.

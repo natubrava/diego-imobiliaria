@@ -104,6 +104,9 @@ Esses testes provam que frontend e backend são compatíveis. Em 23/07/2026, o m
 - Valor oficial armazenado em: **Apps Script → Configurações do projeto → Propriedades do script → `APP_TOKEN`**.
 - O valor foi criado em 22/07/2026 e não deve ser copiado para arquivos versionados.
 - No navegador do usuário, o frontend guarda o valor em `localStorage` com a chave `diego_access_token_v2`.
+- O link privado usa o fragmento `#acesso=...`, que não é enviado ao GitHub Pages. O frontend salva o token e limpa imediatamente o fragmento da barra de endereço.
+- O mesmo link pode ativar vários computadores; não se cria um token por dispositivo.
+- O atalho oficial com o valor real fica somente no arquivo local ignorado `ACESSO-DIEGO-PRIVADO.url`.
 - A URL opcional personalizada fica em `localStorage` com a chave `diego_api_url_v2`.
 - Para scripts locais, usar as variáveis `DIEGO_APP_TOKEN` e `DIEGO_API_URL`.
 - Se o token for rotacionado, alterar a Propriedade do script e cadastrar o novo valor novamente em cada navegador autorizado.
@@ -146,6 +149,8 @@ Não assuma propriedade apenas pelo e-mail ou pelo nome. Antes de alterar compar
 
 - `API Diego chaves.txt`
 - `CREDENCIAIS-LOCAL.md`
+- `ACESSO-DIEGO-PRIVADO.url`
+- `ACESSO-DIEGO-PRIVADO.txt`
 - `.env` e `.env.*`
 - `data/`
 - `LOCACAO ANUAL 2026.jpeg`
@@ -156,7 +161,7 @@ Esses caminhos devem permanecer no `.gitignore`.
 ## Estado atual e próximos passos
 
 1. O frontend novo está publicado no endereço oficial acima.
-2. Em cada navegador autorizado, abrir **Configurações**, informar o `APP_TOKEN` e usar **Salvar e testar**. O token fica somente no `localStorage` daquele navegador.
+2. Para autorizar outro computador, enviar ao Diego o mesmo `ACESSO-DIEGO-PRIVADO.url` por um canal privado. Ao abrir, o token é salvo e removido da URL automaticamente.
 3. Validar periodicamente o site em desktop e celular.
 4. Não criar pagamentos ou registros fictícios na base real durante testes.
 5. Futuras publicações devem ser feitas na branch `main` de `natubrava/diego-imobiliaria`; o GitHub Pages recompila automaticamente.

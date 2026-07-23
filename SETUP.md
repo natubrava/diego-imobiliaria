@@ -27,6 +27,18 @@ O acesso externo precisa ficar habilitado porque o frontend está no GitHub Page
 1. Publique os arquivos no GitHub Pages.
 2. Abra **Configurações** no sistema.
 3. Cole a URL `/exec` e o mesmo `APP_TOKEN`.
+
+### Acesso rápido em outros computadores
+
+O `APP_TOKEN` é único e reutilizável: não é necessário gerar um novo token para cada computador.
+
+No primeiro navegador já configurado, abra **Configurações** e clique em **Copiar link de acesso**. Envie esse link privado somente ao Diego. Ao abri-lo em outro computador, o sistema:
+
+1. salva automaticamente o mesmo acesso naquele navegador;
+2. remove o token da barra de endereço;
+3. abre o painel normalmente nas próximas visitas.
+
+Quem tiver o link privado poderá acessar o sistema. Não publique o link, não o coloque no GitHub e, se ele vazar, rotacione o `APP_TOKEN`.
 4. Clique em **Salvar e testar** e depois em **Preparar planilha**.
 5. Preencha o e-mail de alertas e salve.
 

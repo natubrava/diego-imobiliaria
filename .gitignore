@@ -2,6 +2,8 @@
 API Diego chaves.txt
 CREDENCIAIS-LOCAL.md
 CONTEXTO-PRIVADO.md
+ACESSO-DIEGO-PRIVADO.url
+ACESSO-DIEGO-PRIVADO.txt
 *.secrets.md
 .env
 .env.*
