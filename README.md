@@ -2,6 +2,10 @@
 
 Central simples e responsiva para administrar locações, pagamentos anuais e imóveis à venda. O frontend é estático e o backend usa Google Apps Script com Google Sheets.
 
+**Sistema online:** <https://natubrava.github.io/diego-imobiliaria/>
+
+**Código-fonte:** <https://github.com/natubrava/diego-imobiliaria>
+
 > **Continuidade:** agentes e IAs devem começar por [AGENTS.md](AGENTS.md) e [CONTEXTO-IA.md](CONTEXTO-IA.md). Esses arquivos registram recursos, contas, localização segura das credenciais e o estado real da implantação sem expor valores secretos.
 
 ## O que a versão 2 resolve

@@ -1,6 +1,6 @@
 # Contexto operacional para futuras IAs
 
-Atualizado em **22/07/2026**. Este arquivo contém referências operacionais, mas **não contém valores secretos**.
+Atualizado em **23/07/2026**. Este arquivo contém referências operacionais, mas **não contém valores secretos**.
 
 ## Objetivo do sistema
 
@@ -20,7 +20,7 @@ Sistema do corretor Diego para:
 | Frontend | HTML, CSS e JavaScript estático | raiz, `css/` e `js/` |
 | Backend | Google Apps Script | projeto vinculado à planilha |
 | Banco de dados | Google Sheets | planilha `BASE_IMOBILIARIA` |
-| Hospedagem planejada | GitHub Pages | frontend novo ainda pendente; backend já publicado |
+| Hospedagem | GitHub Pages | <https://natubrava.github.io/diego-imobiliaria/> |
 | Alertas | `MailApp` do Google Apps Script | função `checkVencimentos` |
 
 ## Recursos Google
@@ -84,7 +84,7 @@ Acionadores observados após a preparação:
 - permaneceu um único acionador pertencente a “Outro usuário”, com última execução observada em 22/07/2026 às 08:21:51 e taxa de erros de 0%;
 - não execute novamente `setupSystemFromMenu` sem revisar os acionadores depois, pois cada usuário só consegue listar/remover os próprios acionadores por código.
 
-### Validação integrada de 22/07/2026
+### Validação integrada
 
 O frontend novo foi aberto localmente em `http://127.0.0.1:4173/` apenas para teste e conectado ao backend público:
 
@@ -95,7 +95,7 @@ O frontend novo foi aberto localmente em `http://127.0.0.1:4173/` apenas para te
 - grade anual: carregada para 2026, sem criar pagamentos fictícios;
 - nenhum dado foi alterado durante o teste.
 
-Esses testes provam que frontend e backend são compatíveis. O frontend novo ainda precisa ser hospedado publicamente.
+Esses testes provam que frontend e backend são compatíveis. Em 23/07/2026, o mesmo frontend foi publicado no GitHub Pages.
 
 ## Segredos e configurações sensíveis
 
@@ -110,12 +110,16 @@ Esses testes provam que frontend e backend são compatíveis. O frontend novo ai
 
 ### GitHub
 
+- Repositório oficial atual: <https://github.com/natubrava/diego-imobiliaria>
+- Site oficial atual: <https://natubrava.github.io/diego-imobiliaria/>
+- Proprietário: conta GitHub `natubrava`.
+- Branch publicada: `main`, pasta raiz, com HTTPS obrigatório.
 - Repositório original: <https://github.com/Diegogalafassi/imobiliaria>
 - Site antigo: <https://diegogalafassi.github.io/imobiliaria/>
 - Contas autenticadas encontradas no GitHub CLI: `Ackerss` e `natubrava`.
 - Ambas retornaram permissão `READ` no repositório original.
-- O repositório público proposto `natubrava/diego-imobiliaria` **não foi criado**, pois aguarda autorização explícita do usuário.
-- O repositório Git local existe, branch `main`, commit inicial `dda4f6fd1f0da7a28f536d9d8aa830f51a21aace`, sem remoto configurado.
+- O repositório público novo foi criado com autorização explícita do usuário em 23/07/2026.
+- O repositório Git local usa a branch `main` e o remoto `origin` aponta para `natubrava/diego-imobiliaria`.
 - `deploy.ps1` e `update_gs.ps1` leem `DIEGO_GITHUB_TOKEN` do ambiente.
 - Pode existir uma credencial antiga no arquivo local `API Diego chaves.txt`; ela é legado, não deve ser impressa nem publicada e deve ser considerada comprometida até ser revogada.
 
@@ -133,7 +137,8 @@ Esses testes provam que frontend e backend são compatíveis. O frontend novo ai
 | Apps Script / executar como | `jacsonsax@gmail.com` | identidade mostrada na implantação existente |
 | Alertas do sistema | `diegogalafassibc@gmail.com` | destinatário configurado na planilha |
 | GitHub original | organização/usuário `Diegogalafassi` | proprietário do repositório original |
-| GitHub CLI | `Ackerss`, `natubrava` | contas locais; apenas leitura no repositório original |
+| GitHub atual | `natubrava` | proprietário do repositório oficial novo |
+| GitHub CLI | `Ackerss`, `natubrava` | contas locais; ambas têm apenas leitura no repositório original |
 
 Não assuma propriedade apenas pelo e-mail ou pelo nome. Antes de alterar compartilhamento, permissões ou destino de publicação, confirme com o usuário.
 
@@ -150,13 +155,13 @@ Esses caminhos devem permanecer no `.gitignore`.
 
 ## Estado atual e próximos passos
 
-1. Obter autorização explícita para o destino GitHub. Não publicar automaticamente em uma conta diferente.
-2. Publicar o frontend sem os arquivos privados.
-3. Abrir o site público novo e informar `APP_TOKEN` em **Configurações** no navegador autorizado.
-4. Repetir o teste de conexão no domínio público e validar desktop e celular.
-5. Não criar pagamentos ou registros fictícios na base real durante o teste.
+1. O frontend novo está publicado no endereço oficial acima.
+2. Em cada navegador autorizado, abrir **Configurações**, informar o `APP_TOKEN` e usar **Salvar e testar**. O token fica somente no `localStorage` daquele navegador.
+3. Validar periodicamente o site em desktop e celular.
+4. Não criar pagamentos ou registros fictícios na base real durante testes.
+5. Futuras publicações devem ser feitas na branch `main` de `natubrava/diego-imobiliaria`; o GitHub Pages recompila automaticamente.
 
-O repositório original continua aceitando somente leitura pelas contas GitHub locais conhecidas. Até o frontend novo ser publicado, <https://diegogalafassi.github.io/imobiliaria/> continua mostrando a versão antiga.
+O repositório e o site antigos continuam existindo e podem mostrar a versão anterior, mas não são mais o destino oficial.
 
 ## Validação técnica local
 
