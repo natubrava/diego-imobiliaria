@@ -20,7 +20,7 @@ Sistema do corretor Diego para:
 | Frontend | HTML, CSS e JavaScript estático | raiz, `css/` e `js/` |
 | Backend | Google Apps Script | projeto vinculado à planilha |
 | Banco de dados | Google Sheets | planilha `BASE_IMOBILIARIA` |
-| Hospedagem planejada | GitHub Pages | publicação ainda pendente |
+| Hospedagem planejada | GitHub Pages | frontend novo ainda pendente; backend já publicado |
 | Alertas | `MailApp` do Google Apps Script | função `checkVencimentos` |
 
 ## Recursos Google
@@ -72,11 +72,30 @@ Estado da implantação em 22/07/2026:
 - o código novo foi salvo no projeto;
 - o projeto foi renomeado;
 - a Propriedade do script `APP_TOKEN` foi criada;
-- a implantação existente ainda apontava para a versão 4 antiga;
-- a atualização para a nova versão chegou à autorização do Google, mas ficou pendente na tela de aplicativo não verificado;
-- não considerar o backend novo publicado até concluir a autorização e confirmar uma nova versão em **Gerenciar implantações**.
+- a autorização do Google foi concluída pelo usuário;
+- a implantação existente foi atualizada para a **versão 5**, em 22/07/2026 às 21:19, preservando a mesma URL `/exec`;
+- `setupSystemFromMenu` foi executada com sucesso e confirmou “Sistema preparado”;
+- o backend protegido foi testado pelo frontend local e confirmou “Conexão funcionando — Dados sincronizados com o Google Sheets”.
 
-Depois da autorização, executar `setupSystemFromMenu` uma vez para garantir abas, configurações e o acionador diário. Verificar em **Acionadores** a existência de `checkVencimentos`.
+Acionadores observados após a preparação:
+
+- havia dois acionadores `checkVencimentos`;
+- o acionador recém-criado pela sessão atual foi removido para evitar mensagens duplicadas;
+- permaneceu um único acionador pertencente a “Outro usuário”, com última execução observada em 22/07/2026 às 08:21:51 e taxa de erros de 0%;
+- não execute novamente `setupSystemFromMenu` sem revisar os acionadores depois, pois cada usuário só consegue listar/remover os próprios acionadores por código.
+
+### Validação integrada de 22/07/2026
+
+O frontend novo foi aberto localmente em `http://127.0.0.1:4173/` apenas para teste e conectado ao backend público:
+
+- status: `Dados sincronizados`;
+- dashboard: 26 locações ativas, R$ 91.548,89 previstos no mês, 22 aluguéis em atraso e 4 renovações em 60 dias;
+- locações: 26 registros ativos carregados;
+- vendas: 6 anúncios reais carregados;
+- grade anual: carregada para 2026, sem criar pagamentos fictícios;
+- nenhum dado foi alterado durante o teste.
+
+Esses testes provam que frontend e backend são compatíveis. O frontend novo ainda precisa ser hospedado publicamente.
 
 ## Segredos e configurações sensíveis
 
@@ -131,13 +150,13 @@ Esses caminhos devem permanecer no `.gitignore`.
 
 ## Estado atual e próximos passos
 
-1. Concluir manualmente a autorização do Google na aba já aberta do navegador.
-2. Em Apps Script, confirmar a criação da nova versão na implantação existente e preservar a URL `/exec`.
-3. Executar `setupSystemFromMenu` e confirmar o acionador diário.
-4. Obter autorização explícita para o destino GitHub. Não publicar automaticamente em uma conta diferente.
-5. Publicar o frontend sem os arquivos privados.
-6. Abrir o site, informar `APP_TOKEN` em **Configurações** e testar conexão, dashboard, locações, grade, vendas e alertas.
-7. Não criar pagamentos ou registros fictícios na base real durante o teste.
+1. Obter autorização explícita para o destino GitHub. Não publicar automaticamente em uma conta diferente.
+2. Publicar o frontend sem os arquivos privados.
+3. Abrir o site público novo e informar `APP_TOKEN` em **Configurações** no navegador autorizado.
+4. Repetir o teste de conexão no domínio público e validar desktop e celular.
+5. Não criar pagamentos ou registros fictícios na base real durante o teste.
+
+O repositório original continua aceitando somente leitura pelas contas GitHub locais conhecidas. Até o frontend novo ser publicado, <https://diegogalafassi.github.io/imobiliaria/> continua mostrando a versão antiga.
 
 ## Validação técnica local
 
@@ -146,4 +165,3 @@ npm test
 ```
 
 O teste esperado termina com `Smoke test: módulos e utilitários OK`.
-

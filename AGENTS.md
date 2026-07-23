@@ -24,6 +24,7 @@ Antes de alterar este projeto, leia nesta ordem:
 - Planilha real migrada e limpa com a lista de 2026.
 - Código novo já foi colocado no projeto Apps Script.
 - `APP_TOKEN` já foi criado nas Propriedades do script.
-- A autorização final e a nova versão do Web App ainda precisam ser concluídas.
-- O frontend ainda não foi publicado pela conta atual. Consulte `CONTEXTO-IA.md` para os bloqueios exatos.
-
+- Backend v2 publicado em 22/07/2026 como **versão 5**, usando a URL `/exec` já existente.
+- Conexão protegida validada com dados reais: 26 locações ativas, 6 imóveis à venda e grade anual carregando.
+- Existe um único acionador `checkVencimentos`, pertencente a outro usuário do projeto; a última execução observada teve 0% de erros.
+- O frontend novo ainda não foi publicado pela conta atual. O endereço GitHub Pages existente continua servindo a versão antiga. Consulte `CONTEXTO-IA.md` para o bloqueio exato.
