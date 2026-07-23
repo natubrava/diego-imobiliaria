@@ -97,6 +97,21 @@ O frontend novo foi aberto localmente em `http://127.0.0.1:4173/` apenas para te
 
 Esses testes provam que frontend e backend são compatíveis. Em 23/07/2026, o mesmo frontend foi publicado no GitHub Pages.
 
+### Validação pública de 23/07/2026
+
+O link privado oficial foi aberto no domínio do GitHub Pages em um navegador e validado ponta a ponta:
+
+- o token foi salvo automaticamente;
+- o fragmento `#acesso=...` foi removido da barra de endereço;
+- o endereço canônico continuou conectado depois, sem o token na URL;
+- status exibido: `Dados sincronizados`;
+- locações: 26 cartões e 26 linhas reais;
+- vendas: 6 cartões reais;
+- grade anual: 26 imóveis e 312 células mensais;
+- nenhum registro foi criado ou alterado durante o teste.
+
+Os arquivos privados locais `ACESSO-DIEGO-PRIVADO.url` e `ACESSO-DIEGO-PRIVADO.txt` contêm, respectivamente, o atalho clicável e o inventário completo do acesso. Ambos estão ignorados pelo Git.
+
 ## Segredos e configurações sensíveis
 
 ### `APP_TOKEN` do sistema
