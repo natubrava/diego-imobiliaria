@@ -1,10 +1,10 @@
-import { renderDashboard } from './dashboard.js?v=20260723-1';
-import { renderLocacoes, openLocacaoModal } from './imoveis.js?v=20260723-1';
-import { renderFinanceiro } from './pagamentos.js?v=20260723-1';
-import { renderVendas, openVendaModal } from './vendas.js?v=20260723-1';
-import { renderConfiguracoes } from './configuracoes.js?v=20260723-1';
-import { clearCache, consumePrivateAccessLink, ping } from './api.js?v=20260723-1';
-import { closeModal, escHtml, openModal, renderIcons, toast } from './utils.js?v=20260723-1';
+import { renderDashboard } from './dashboard.js?v=20260812-1';
+import { renderLocacoes, openLocacaoModal } from './imoveis.js?v=20260812-1';
+import { renderFinanceiro } from './pagamentos.js?v=20260812-1';
+import { renderVendas, openVendaModal } from './vendas.js?v=20260812-1';
+import { renderConfiguracoes } from './configuracoes.js?v=20260812-1';
+import { clearCache, consumePrivateAccessLink, ping } from './api.js?v=20260812-1';
+import { closeModal, escHtml, openModal, renderIcons, toast } from './utils.js?v=20260812-1';
 
 const routes = {
   dashboard: { title: 'Visão geral', eyebrow: 'Central de gestão', render: renderDashboard },
@@ -76,7 +76,7 @@ window.addEventListener('hashchange', () => navigate());
 window.addEventListener('app:refresh', () => navigate(location.hash, true));
 window.addEventListener('app:connection', event => setConnection(event.detail));
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const accessActivated = consumePrivateAccessLink();
   renderIcons();
   document.getElementById('menuBtn').onclick = () => {
@@ -93,7 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
     event.currentTarget.querySelector('svg')?.classList.add('spin');
     clearCache(); await navigate(location.hash, true); await checkConnection();
   };
-  navigate(location.hash || '#dashboard');
-  checkConnection();
+  // Evita duas consultas simultâneas ao Apps Script na abertura. Em conexões
+  // mais lentas, isso podia carregar uma tela e ainda marcar o rodapé offline.
+  await navigate(location.hash || '#dashboard');
+  await checkConnection();
   if (accessActivated) toast('Acesso ativado neste computador.','success');
 });

@@ -24,6 +24,9 @@ export function consumePrivateAccessLink() {
   const token = readAccessTokenFromHash(location.hash);
   if (!token) return false;
   setAccessToken(token);
+  // O link privado oficial também corrige navegadores que guardaram a URL
+  // de uma implantação antiga do Apps Script.
+  setApiUrl(DEFAULT_API_URL);
   history.replaceState(null, '', `${location.pathname}${location.search}#dashboard`);
   return true;
 }
@@ -35,7 +38,7 @@ export function getPrivateAccessLink() {
 }
 
 async function request(action, { data, params = {}, method = 'GET', fresh = false } = {}) {
-  const url = getApiUrl();
+  let url = getApiUrl();
   if (!url) throw new Error('Conecte o sistema ao Google Apps Script nas Configurações.');
   const token = getAccessToken();
   const cacheKey = `${action}:${JSON.stringify(params)}`;
@@ -45,7 +48,21 @@ async function request(action, { data, params = {}, method = 'GET', fresh = fals
   // Todas as chamadas via POST: o código de acesso não fica exposto na URL,
   // no histórico do navegador ou em logs de query string.
   const body = new URLSearchParams({ action, token, ...params, data: JSON.stringify(data || {}) });
-  const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body, redirect: 'follow', cache: 'no-store' });
+  const send = target => fetch(target, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body, redirect: 'follow', cache: 'no-store' });
+  let response = await send(url);
+
+  // Uma URL antiga salva no navegador era priorizada sobre a implantação
+  // oficial e deixava todas as telas presas em "Falha de conexão (404)".
+  // Um 404 também pode ser transitório no redirecionamento do Apps Script.
+  // Corrige o endereço quando necessário e repete a chamada uma única vez.
+  if (response.status === 404) {
+    if (url !== DEFAULT_API_URL) {
+      setApiUrl('');
+      url = DEFAULT_API_URL;
+    }
+    await new Promise(resolve => setTimeout(resolve, 180));
+    response = await send(url);
+  }
   if (!response.ok) throw new Error(`Falha de conexão (${response.status}).`);
   let json;
   try { json = await response.json(); } catch { throw new Error('O backend respondeu em formato inválido. Confira a implantação.'); }
