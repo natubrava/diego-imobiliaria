@@ -1,5 +1,5 @@
-import * as api from './api.js?v=20260812-1';
-import { closeModal, debounce, escHtml, formatCurrency, formatDate, initials, MONTHS_LONG, normalizeText, openModal, parseMoney, renderIcons, setButtonBusy, statusBadge, toast } from './utils.js?v=20260812-1';
+import * as api from './api.js?v=20260812-2';
+import { closeModal, debounce, escHtml, formatCurrency, formatDate, initials, localISO, MONTHS_LONG, normalizeText, openModal, parseMoney, renderIcons, setButtonBusy, statusBadge, toast } from './utils.js?v=20260812-2';
 
 let records = [];
 let activeFilter = 'todos';
@@ -71,7 +71,7 @@ async function confirmPayment(id) {
   const now = new Date();
   const day = Math.min(Number(item.diaVencimentoPadrao)||10, new Date(now.getFullYear(), now.getMonth()+1, 0).getDate());
   try {
-    await api.savePagamento({ imovelId:id, mesReferencia:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`, dataVencimento:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`, dataPagamento:new Date().toLocaleDateString('sv-SE'), valor:item.valorPadrao, status:'pago', observacoes:'Confirmação rápida' });
+    await api.savePagamento({ imovelId:id, mesReferencia:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`, dataVencimento:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`, dataPagamento:localISO(), valor:item.valorPadrao, status:'pago', observacoes:'Confirmação rápida' });
     toast(`${item.nome}: pagamento confirmado.`, 'success');
     api.clearCache();
     window.dispatchEvent(new CustomEvent('app:refresh'));

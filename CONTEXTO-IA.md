@@ -1,6 +1,6 @@
 # Contexto operacional para futuras IAs
 
-Atualizado em **23/07/2026**. Este arquivo contém referências operacionais, mas **não contém valores secretos**.
+Atualizado em **12/08/2026**. Este arquivo contém referências operacionais, mas **não contém valores secretos**.
 
 ## Objetivo do sistema
 
@@ -67,22 +67,37 @@ Abas legadas:
 - URL do Web App existente: <https://script.google.com/macros/s/AKfycby4S2kc98PpiKueLvb1lcDzTFiPc2Bwqusgdrtcw51x0ENLZeZzFfSaICTaRPvTvBzt/exec>
 - A mesma URL está em `js/api.js` como `DEFAULT_API_URL`.
 
-Estado da implantação em 22/07/2026:
+Estado da implantação em 12/08/2026:
 
 - o código novo foi salvo no projeto;
 - o projeto foi renomeado;
 - a Propriedade do script `APP_TOKEN` foi criada;
 - a autorização do Google foi concluída pelo usuário;
-- a implantação existente foi atualizada para a **versão 5**, em 22/07/2026 às 21:19, preservando a mesma URL `/exec`;
+- a implantação existente foi atualizada para a **versão 7**, em 12/08/2026, preservando a mesma URL `/exec`;
 - `setupSystemFromMenu` foi executada com sucesso e confirmou “Sistema preparado”;
 - o backend protegido foi testado pelo frontend local e confirmou “Conexão funcionando — Dados sincronizados com o Google Sheets”.
 
-Acionadores observados após a preparação:
+Acionadores observados após a otimização de 12/08/2026:
 
-- havia dois acionadores `checkVencimentos`;
-- o acionador recém-criado pela sessão atual foi removido para evitar mensagens duplicadas;
-- permaneceu um único acionador pertencente a “Outro usuário”, com última execução observada em 22/07/2026 às 08:21:51 e taxa de erros de 0%;
+- o acionador legado pertencente a “Outro usuário” passou a mostrar 100% de erro por falta de permissão de `MailApp` dessa conta e não pode ser removido por outra conta;
+- foi criado um acionador `checkVencimentos` pertencente à conta que executa o Web App;
+- a permissão de e-mail dessa conta foi validada por `MailApp.getRemainingDailyQuota()`, sem enviar mensagem de teste;
+- o código trata a falta de permissão do acionador legado sem gerar nova falha; o acionador autorizado continua responsável pelo envio;
+- a deduplicação em `AlertasLog` impede que dois acionadores autorizados repitam o mesmo aviso;
 - não execute novamente `setupSystemFromMenu` sem revisar os acionadores depois, pois cada usuário só consegue listar/remover os próprios acionadores por código.
+
+### Otimização e compatibilidade de 12/08/2026
+
+- frontend e backend passaram para a versão 2.1;
+- `getBootstrap` reúne Visão geral, Locações, Grade anual, Vendas e Config em uma única chamada;
+- cada aba da planilha é lida no máximo uma vez durante essa chamada;
+- o backend mantém um cache curto invalidado automaticamente após gravações;
+- o navegador reutiliza o pacote por 60 segundos e compartilha chamadas simultâneas;
+- leituras podem tentar novamente até três vezes em falhas transitórias; gravações nunca são repetidas automaticamente;
+- uma URL antiga salva no navegador é descartada automaticamente após 404;
+- a abertura deixou de executar um `ping` redundante depois de carregar os dados;
+- chamadas diretas medidas após a implantação retornaram o pacote completo em 3,7 s na primeira leitura e 1,6 s na leitura em cache;
+- o pacote validado continha 26 locações, 26 linhas/312 meses na grade e 6 imóveis à venda.
 
 ### Validação integrada
 
@@ -189,4 +204,4 @@ O repositório e o site antigos continuam existindo e podem mostrar a versão an
 npm test
 ```
 
-O teste esperado termina com `Smoke test: módulos e utilitários OK`.
+O teste esperado termina com `Smoke test: frontend, conexão e backend OK`.

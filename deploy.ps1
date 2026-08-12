@@ -1,5 +1,5 @@
 param(
-  [string]$Repository = "Diegogalafassi/imobiliaria",
+  [string]$Repository = "natubrava/diego-imobiliaria",
   [string]$Branch = "main"
 )
 

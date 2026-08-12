@@ -1,5 +1,5 @@
-import * as api from './api.js?v=20260812-1';
-import { closeModal, escHtml, formatCurrency, MONTHS, openModal, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-1';
+import * as api from './api.js?v=20260812-2';
+import { closeModal, escHtml, formatCurrency, localISO, MONTHS, openModal, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-2';
 
 let selectedYear = new Date().getFullYear();
 
@@ -37,7 +37,7 @@ function openPayment(imovelId, month, status, paymentId, value, day, container) 
   const reference = `${selectedYear}-${String(month).padStart(2,'0')}`;
   const maxDay = new Date(selectedYear, month, 0).getDate();
   const dueDate = `${selectedYear}-${String(month).padStart(2,'0')}-${String(Math.min(day,maxDay)).padStart(2,'0')}`;
-  const today = new Date().toLocaleDateString('sv-SE');
+  const today = localISO();
   openModal({ title: paid ? `Pagamento de ${MONTHS[month-1]}` : `Confirmar ${MONTHS[month-1]}`, kicker:`Referência ${reference}`,
     body:`${paid?'<div class="callout warning" style="margin-bottom:15px"><i data-lucide="info"></i><div>Este mês já está confirmado. Você pode corrigir os dados ou desfazer o lançamento.</div></div>':''}<div class="form-grid"><div class="field"><label>Valor recebido</label><input id="payValue" inputmode="decimal" value="${value}"></div><div class="field"><label>Data do recebimento</label><input id="payDate" type="date" value="${today}"></div><div class="field full"><label>Observação</label><input id="payNote" placeholder="Opcional"></div></div>`,
     footer:`${paid?'<button class="danger-button" id="undoPayment">Desfazer</button>':''}<button class="ghost-button" id="cancelPayment">Cancelar</button><button class="primary-button" id="savePayment"><i data-lucide="check"></i>${paid?'Atualizar':'Confirmar pago'}</button>` });

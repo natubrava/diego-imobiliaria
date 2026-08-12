@@ -20,6 +20,8 @@ Central simples e responsiva para administrar locações, pagamentos anuais e im
 - migração automática de colunas sem apagar os dados antigos;
 - código de acesso no backend, auditoria de mudanças e escrita com bloqueio;
 - link privado reutilizável para ativar rapidamente computadores autorizados;
+- carregamento conjunto e cache curto para trocar de tela sem repetir consultas à planilha;
+- recuperação automática de falhas transitórias sem repetir operações de gravação;
 - interface mobile-first e sem dependência de framework.
 
 Consulte [SETUP.md](SETUP.md) para instalar, [AUDITORIA.md](AUDITORIA.md) para as decisões técnicas e [CONTEXTO-IA.md](CONTEXTO-IA.md) para operação e continuidade.

@@ -1,10 +1,10 @@
-import { renderDashboard } from './dashboard.js?v=20260812-1';
-import { renderLocacoes, openLocacaoModal } from './imoveis.js?v=20260812-1';
-import { renderFinanceiro } from './pagamentos.js?v=20260812-1';
-import { renderVendas, openVendaModal } from './vendas.js?v=20260812-1';
-import { renderConfiguracoes } from './configuracoes.js?v=20260812-1';
-import { clearCache, consumePrivateAccessLink, ping } from './api.js?v=20260812-1';
-import { closeModal, escHtml, openModal, renderIcons, toast } from './utils.js?v=20260812-1';
+import { renderDashboard } from './dashboard.js?v=20260812-2';
+import { renderLocacoes, openLocacaoModal } from './imoveis.js?v=20260812-2';
+import { renderFinanceiro } from './pagamentos.js?v=20260812-2';
+import { renderVendas, openVendaModal } from './vendas.js?v=20260812-2';
+import { renderConfiguracoes } from './configuracoes.js?v=20260812-2';
+import { clearCache, consumePrivateAccessLink } from './api.js?v=20260812-2';
+import { closeModal, escHtml, openModal, renderIcons, toast } from './utils.js?v=20260812-2';
 
 const routes = {
   dashboard: { title: 'Visão geral', eyebrow: 'Central de gestão', render: renderDashboard },
@@ -31,16 +31,30 @@ export async function navigate(hash = location.hash, force = false) {
   closeSidebar();
   const container = document.getElementById('pageContent');
   container.innerHTML = '<div class="loading-state"><span class="loader"></span><p>Organizando seus dados…</p></div>';
+  const slowMessage = setTimeout(() => {
+    if (id === navigationId) {
+      const text = container.querySelector('.loading-state p');
+      if (text) text.textContent = 'O Google está demorando um pouco, mas seguimos tentando…';
+    }
+  }, 6000);
   try {
-    await route.render(container);
-    if (id !== navigationId) return;
+    const staging = document.createElement('div');
+    await route.render(staging);
+    if (id !== navigationId) { clearTimeout(slowMessage); return false; }
+    container.replaceChildren(...staging.childNodes);
+    clearTimeout(slowMessage);
+    setConnection(true);
     renderIcons(container);
     container.focus({ preventScroll: true });
     scrollTo({ top: 0, behavior: 'smooth' });
+    return true;
   } catch (error) {
+    clearTimeout(slowMessage);
+    if (id !== navigationId) return false;
     container.innerHTML = `<div class="card empty-state"><div class="empty-icon"><i data-lucide="wifi-off"></i></div><h3>Não foi possível abrir esta área</h3><p>${escHtml(error.message)}</p><a class="primary-button" href="#configuracoes" style="margin-top:14px">Ver conexão</a></div>`;
     renderIcons(container);
     setConnection(false);
+    return false;
   }
 }
 
@@ -54,10 +68,6 @@ function setConnection(online) {
   dot.classList.toggle('online', online);
   dot.classList.toggle('offline', !online);
   document.getElementById('connectionText').textContent = online ? 'Dados sincronizados' : 'Conexão necessária';
-}
-
-async function checkConnection() {
-  try { await ping(); setConnection(true); } catch { setConnection(false); }
 }
 
 function openQuickAdd() {
@@ -90,12 +100,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('quickAddBtn').onclick = openQuickAdd;
   document.getElementById('mobileAddBtn').onclick = openQuickAdd;
   document.getElementById('refreshBtn').onclick = async event => {
-    event.currentTarget.querySelector('svg')?.classList.add('spin');
-    clearCache(); await navigate(location.hash, true); await checkConnection();
+    const icon = event.currentTarget.querySelector('svg');
+    icon?.classList.add('spin');
+    try { clearCache(); await navigate(location.hash, true); }
+    finally { icon?.classList.remove('spin'); }
   };
-  // Evita duas consultas simultâneas ao Apps Script na abertura. Em conexões
-  // mais lentas, isso podia carregar uma tela e ainda marcar o rodapé offline.
   await navigate(location.hash || '#dashboard');
-  await checkConnection();
   if (accessActivated) toast('Acesso ativado neste computador.','success');
+});
+
+window.addEventListener('offline', () => setConnection(false));
+window.addEventListener('online', () => {
+  clearCache();
+  navigate(location.hash || '#dashboard', true);
 });

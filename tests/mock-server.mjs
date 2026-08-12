@@ -19,6 +19,14 @@ const sales = [
 
 function api(action, url) {
   if (action === 'ping') return { ok:true, version:'2.0.0' };
+  if (action === 'getBootstrap') return {
+    ok:true, version:'2.1.0',
+    dashboard:api('getDashboard', url),
+    locacoes:api('getImoveis', url),
+    financeiro:api('getFinanceiro', url),
+    vendas:api('getVendas', url),
+    config:api('getConfig', url)
+  };
   if (action === 'getImoveis') return { data:rentals };
   if (action === 'getImovel') return { data:rentals.find(item => item.id === url.searchParams.get('id')) };
   if (action === 'getVendas') return { data:sales };

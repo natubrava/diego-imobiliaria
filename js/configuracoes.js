@@ -1,10 +1,10 @@
-import * as api from './api.js?v=20260812-1';
-import { escHtml, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-1';
+import * as api from './api.js?v=20260812-2';
+import { escHtml, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-2';
 
 export async function renderConfiguracoes(container) {
   let config = { emailAlerta:'', diasAntecedencia:5, diasRenovacao:60, alertasAtivos:'true' };
   let online = false;
-  try { await api.ping(); const response = await api.getConfig(); config = { ...config, ...(response.data||{}) }; online = true; } catch {}
+  try { const response = await api.getConfig(); config = { ...config, ...(response.data||{}) }; online = true; } catch {}
   container.innerHTML = `
     <header class="section-heading"><div><h2>Configurações do sistema</h2><p>Conexão, alertas automáticos e manutenção da base.</p></div></header>
     <div class="settings-grid">
@@ -52,6 +52,6 @@ function bind(container) {
     }
   };
   container.querySelector('#saveConfig').onclick = async event => { const button=event.currentTarget; setButtonBusy(button,true); try { await api.saveConfig({ emailAlerta:container.querySelector('#cfgEmail').value.trim(), diasAntecedencia:Number(container.querySelector('#cfgDueDays').value), diasRenovacao:Number(container.querySelector('#cfgRenewDays').value), alertasAtivos:container.querySelector('#cfgAlerts').checked }); toast('Alertas atualizados.','success'); setButtonBusy(button,false); } catch(error){ toast(error.message,'error'); setButtonBusy(button,false); } };
-  container.querySelector('#testAlerts').onclick = async event => { const button=event.currentTarget; setButtonBusy(button,true,'Verificando…'); try { const result=await api.runAlertCheck(); toast(result.sent?'Resumo enviado para o e-mail configurado.':'Nenhum alerta precisava ser enviado hoje.','success'); } catch(error){ toast(error.message,'error'); } setButtonBusy(button,false); };
+  container.querySelector('#testAlerts').onclick = async event => { const button=event.currentTarget; setButtonBusy(button,true,'Verificando…'); try { const result=await api.runAlertCheck(); if (result.reason === 'mail-permission') toast('A conta do alerta precisa autorizar o envio de e-mail.','error'); else toast(result.sent?'Resumo enviado para o e-mail configurado.':'Nenhum alerta precisava ser enviado hoje.','success'); } catch(error){ toast(error.message,'error'); } setButtonBusy(button,false); };
   container.querySelector('#setupSystem').onclick = async event => { const button=event.currentTarget; setButtonBusy(button,true,'Preparando…'); try { await api.setupSystem(); toast('Planilha, colunas e automação preparados.','success'); } catch(error){ toast(error.message,'error'); } setButtonBusy(button,false); };
 }

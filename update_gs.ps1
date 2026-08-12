@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 $token = $env:DIEGO_GITHUB_TOKEN
 if (-not $token) { throw "Defina DIEGO_GITHUB_TOKEN no ambiente." }
-$repository = "Diegogalafassi/imobiliaria"
+$repository = "natubrava/diego-imobiliaria"
 $remotePath = "apps-script/Code.gs"
 $localPath = Join-Path $PSScriptRoot "apps-script\Code.gs"
 $headers = @{ Authorization = "Bearer $token"; Accept = "application/vnd.github+json"; "X-GitHub-Api-Version" = "2022-11-28" }

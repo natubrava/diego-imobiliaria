@@ -1,5 +1,5 @@
-import * as api from './api.js?v=20260812-1';
-import { dateLabel, escHtml, formatCurrency, formatDate, MONTHS, renderIcons, toast } from './utils.js?v=20260812-1';
+import * as api from './api.js?v=20260812-2';
+import { dateLabel, escHtml, formatCurrency, formatDate, localISO, MONTHS, renderIcons, toast } from './utils.js?v=20260812-2';
 
 export async function renderDashboard(container) {
   const data = await api.getDashboard();
@@ -101,7 +101,7 @@ function bindPayments(container) {
         imovelId: button.dataset.pay,
         mesReferencia: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,
         dataVencimento: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(button.dataset.day).padStart(2,'0')}`,
-        dataPagamento: new Date().toLocaleDateString('sv-SE'), valor: Number(button.dataset.value), status: 'pago', observacoes: 'Confirmado pelo painel'
+        dataPagamento: localISO(), valor: Number(button.dataset.value), status: 'pago', observacoes: 'Confirmado pelo painel'
       });
       toast('Pagamento confirmado. A grade anual foi atualizada.', 'success');
       window.dispatchEvent(new CustomEvent('app:refresh'));

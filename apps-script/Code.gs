@@ -8,7 +8,10 @@
  * Não grave senhas ou chaves neste arquivo.
  */
 
-var VERSION = '2.0.0';
+var VERSION = '2.1.0';
+var REQUEST_SPREADSHEET = null;
+var REQUEST_OBJECT_CACHE = {};
+var REQUEST_PROPERTIES = null;
 var SHEETS = {
   Imoveis: ['id','nome','locatario','telefone','email','diaVencimentoPadrao','valorPadrao','mesReajuste','dataInicio','dataFim','indiceReajuste','status','proprietario','endereco','observacoes','dataCadastro','atualizadoEm'],
   Pagamentos: ['id','imovelId','mesReferencia','dataVencimento','dataPagamento','valor','status','observacoes','atualizadoEm'],
@@ -56,16 +59,30 @@ function removeDailyTrigger() {
   return { ok:true };
 }
 
+// Verificação interna e sem envio. Serve para autorizar e confirmar que a
+// conta dona do acionador tem permissão de e-mail antes de ativar a rotina.
+function checkMailPermission() {
+  return { ok:true, remainingQuota:MailApp.getRemainingDailyQuota() };
+}
+
 // -------------------- HTTP / SEGURANÇA --------------------
 function doGet(e) { return handleRequest(e, false); }
 function doPost(e) { return handleRequest(e, true); }
 
 function handleRequest(e, isPost) {
   try {
+    REQUEST_SPREADSHEET = null;
+    REQUEST_OBJECT_CACHE = {};
+    REQUEST_PROPERTIES = null;
     var params = (e && e.parameter) || {};
     var data = isPost && params.data ? JSON.parse(params.data) : {};
     authorize(params.token || data.token || '');
-    var result = route(params.action, params, data, isPost);
+    var action = params.action;
+    var cached = readResponseCache(action, params);
+    if (cached) return jsonResponse(cached);
+    var result = route(action, params, data, isPost);
+    writeResponseCache(action, params, result);
+    if (isMutation(action)) bumpDataRevision();
     return jsonResponse(result);
   } catch (error) {
     return jsonResponse({ error:error.message || String(error), code:error.code || 'SERVER_ERROR' });
@@ -73,7 +90,7 @@ function handleRequest(e, isPost) {
 }
 
 function authorize(received) {
-  var expected = PropertiesService.getScriptProperties().getProperty('APP_TOKEN');
+  var expected = scriptProperties().getProperty('APP_TOKEN');
   if (!expected) throw codedError('Defina APP_TOKEN nas Propriedades do script antes de usar o sistema.', 'SETUP_REQUIRED');
   if (!received || !constantTimeEquals(String(received), String(expected))) throw codedError('Código de acesso inválido.', 'UNAUTHORIZED');
 }
@@ -90,6 +107,8 @@ function codedError(message, code) { var error = new Error(message); error.code 
 function route(action, params, data, isPost) {
   if (!action) throw codedError('Ação não informada.', 'BAD_REQUEST');
   if (action === 'ping') return { ok:true, version:VERSION, time:isoNow() };
+  if (action === 'getHealth') return { ok:true, version:VERSION, mail:checkMailPermission() };
+  if (action === 'getBootstrap') return getBootstrap(Number(params.year));
   if (action === 'getDashboard') return getDashboard();
   if (action === 'getImoveis') return getImoveis();
   if (action === 'getImovel') return getImovel(params.id);
@@ -114,8 +133,47 @@ function jsonResponse(value) {
   return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);
 }
 
+function scriptProperties() {
+  if (!REQUEST_PROPERTIES) REQUEST_PROPERTIES = PropertiesService.getScriptProperties();
+  return REQUEST_PROPERTIES;
+}
+
+function dataRevision() { return scriptProperties().getProperty('DATA_REVISION') || '1'; }
+
+function bumpDataRevision() {
+  scriptProperties().setProperty('DATA_REVISION', String(new Date().getTime()));
+}
+
+function isMutation(action) {
+  return ['saveImovel','importLocacoes','savePagamento','deletePagamento','saveVenda','saveConfig','runAlertCheck','setupSystem'].indexOf(String(action)) >= 0;
+}
+
+function responseCacheKey(action, params) {
+  if (action !== 'getBootstrap') return '';
+  var year = Number(params.year) || new Date().getFullYear();
+  return 'bootstrap-' + VERSION + '-' + year + '-' + dataRevision();
+}
+
+function readResponseCache(action, params) {
+  var key = responseCacheKey(action, params);
+  if (!key) return null;
+  try {
+    var value = CacheService.getScriptCache().get(key);
+    return value ? JSON.parse(value) : null;
+  } catch (error) { return null; }
+}
+
+function writeResponseCache(action, params, value) {
+  var key = responseCacheKey(action, params);
+  if (!key) return;
+  try { CacheService.getScriptCache().put(key, JSON.stringify(value), 90); } catch (error) {}
+}
+
 // -------------------- PLANILHAS --------------------
-function spreadsheet() { return SpreadsheetApp.getActiveSpreadsheet(); }
+function spreadsheet() {
+  if (!REQUEST_SPREADSHEET) REQUEST_SPREADSHEET = SpreadsheetApp.getActiveSpreadsheet();
+  return REQUEST_SPREADSHEET;
+}
 
 function ensureAllSheets() {
   Object.keys(SHEETS).forEach(function(name) { ensureSheet(name); });
@@ -147,17 +205,30 @@ function styleHeader(sheet, columns) {
 }
 
 function objects(name) {
-  var sheet = ensureSheet(name);
+  if (Object.prototype.hasOwnProperty.call(REQUEST_OBJECT_CACHE, name)) return cloneObjects(REQUEST_OBJECT_CACHE[name]);
+  var sheet = spreadsheet().getSheetByName(name) || ensureSheet(name);
   var range = sheet.getDataRange();
   var values = range.getValues();
-  if (values.length < 2) return [];
+  if (values.length < 2) { REQUEST_OBJECT_CACHE[name] = []; return []; }
   var headers = values[0].map(String);
-  return values.slice(1).map(function(row, index) {
+  var result = values.slice(1).map(function(row, index) {
     var obj = { _row:index + 2 };
     headers.forEach(function(header, column) { obj[header] = cellValue(row[column]); });
     return obj;
   }).filter(function(obj) { return obj.id || (name === 'Config' && obj.chave); });
+  REQUEST_OBJECT_CACHE[name] = result;
+  return cloneObjects(result);
 }
+
+function cloneObjects(items) {
+  return items.map(function(item) {
+    var copy = {};
+    Object.keys(item).forEach(function(key) { copy[key] = item[key]; });
+    return copy;
+  });
+}
+
+function invalidateObjectCache(name) { delete REQUEST_OBJECT_CACHE[name]; }
 
 function cellValue(value) {
   if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value)) return dateISO(value);
@@ -176,6 +247,7 @@ function upsert(name, data, idField) {
   });
   if (existing) sheet.getRange(existing._row,1,1,headers.length).setValues([row]);
   else sheet.appendRow(row);
+  invalidateObjectCache(name);
   return data;
 }
 
@@ -190,6 +262,7 @@ function deleteById(name, id) {
     var item = objects(name).filter(function(row) { return String(row.id) === String(id); })[0];
     if (!item) throw codedError('Registro não encontrado.', 'NOT_FOUND');
     ensureSheet(name).deleteRow(item._row);
+    invalidateObjectCache(name);
     audit('excluir',name,id,'');
     return { ok:true };
   });
@@ -203,6 +276,22 @@ function withWriteLock(callback) {
 
 function audit(action, entity, id, details) {
   upsert('Auditoria', { id:uuid(), dataHora:isoNow(), acao:action, entidade:entity, entidadeId:id || '', detalhes:String(details || '').slice(0,500) });
+}
+
+// Carrega tudo o que forma as telas principais em uma única execução.
+// O cache por requisição garante que cada aba da planilha seja lida só uma vez.
+function getBootstrap(year) {
+  year = year >= 2020 && year <= 2100 ? year : new Date().getFullYear();
+  return {
+    ok:true,
+    version:VERSION,
+    generatedAt:isoNow(),
+    dashboard:getDashboard(),
+    locacoes:getImoveis(),
+    financeiro:getFinanceiro(year),
+    vendas:getVendas(),
+    config:getConfig()
+  };
 }
 
 // -------------------- LOCAÇÕES --------------------
@@ -443,7 +532,13 @@ function checkVencimentos() {
     if (renewalDaysValue !== null && renewalDaysValue < 0 && [1,7,30,60,90].indexOf(Math.abs(renewalDaysValue)) >= 0) addAlert(events,logs,'renovacao',item,renewalDaysValue,'renew-late-' + Math.abs(renewalDaysValue) + '-' + (item.dataFim || new Date().getFullYear()));
   });
   if (!events.length) return { ok:true, sent:false };
-  MailApp.sendEmail({ to:email, subject:'Diego Imóveis — ' + events.length + (events.length===1?' item para revisar':' itens para revisar'), htmlBody:digestHtml(events), name:'Diego Imóveis' });
+  try {
+    MailApp.sendEmail({ to:email, subject:'Diego Imóveis — ' + events.length + (events.length===1?' item para revisar':' itens para revisar'), htmlBody:digestHtml(events), name:'Diego Imóveis' });
+  } catch (error) {
+    // Um acionador antigo pode pertencer a outra conta sem autorização de
+    // e-mail. Ele termina sem erro; o acionador autorizado continua operando.
+    return { ok:false, sent:false, reason:'mail-permission' };
+  }
   withWriteLock(function() { events.forEach(function(event) { upsert('AlertasLog',{ id:uuid(), evento:event.key, tipo:event.type, referenciaId:event.item.id, dataEnvio:today(), destinatario:email }); }); });
   return { ok:true, sent:true, count:events.length };
 }

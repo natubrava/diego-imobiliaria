@@ -25,9 +25,9 @@ Antes de alterar este projeto, leia nesta ordem:
 - Planilha real migrada e limpa com a lista de 2026.
 - Código novo já foi colocado no projeto Apps Script.
 - `APP_TOKEN` já foi criado nas Propriedades do script.
-- Backend v2 publicado em 22/07/2026 como **versão 5**, usando a URL `/exec` já existente.
+- Backend v2.1 publicado em 12/08/2026 como **versão 7**, usando a URL `/exec` já existente.
 - Conexão protegida validada com dados reais: 26 locações ativas, 6 imóveis à venda e grade anual carregando.
-- Existe um único acionador `checkVencimentos`, pertencente a outro usuário do projeto; a última execução observada teve 0% de erros.
+- Existe um acionador `checkVencimentos` autorizado pertencente à conta do Web App. O acionador legado de outro usuário não pode ser removido por essa conta e é tratado sem interromper a rotina.
 - Repositório oficial: `https://github.com/natubrava/diego-imobiliaria`.
 - Frontend oficial publicado via GitHub Pages: `https://natubrava.github.io/diego-imobiliaria/`.
 - O endereço `diegogalafassi.github.io/imobiliaria/` é legado e pode continuar exibindo a versão antiga.

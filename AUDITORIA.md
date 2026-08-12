@@ -30,6 +30,17 @@
 - **Histórico preservado:** locações são encerradas, não apagadas pela interface. A aba de auditoria registra mudanças.
 - **Vendas como extensão leve:** carteira com preço, estágio, foto/link e canais; não tenta substituir um CRM completo antes de validar a rotina.
 
+## Estabilidade e velocidade da versão 2.1
+
+- **Uma consulta inicial:** as quatro telas operacionais recebem um único pacote do backend.
+- **Uma leitura por aba:** a mesma execução não relê `Imoveis`, `Pagamentos`, `Vendas` ou `Config` desnecessariamente.
+- **Cache curto e invalidável:** a navegação fica imediata, mas qualquer gravação invalida os caches do navegador e do backend.
+- **Retentativa somente para leitura:** 404, limite temporário e falha de rede podem ser recuperados sem risco de duplicar cadastros ou pagamentos.
+- **Tempo limite e mensagem clara:** a interface não fica presa indefinidamente em “Organizando seus dados”.
+- **Navegação protegida contra corrida:** uma tela antiga não pode sobrescrever a tela escolhida enquanto uma consulta lenta termina.
+- **Compatibilidade de datas:** datas locais não dependem mais de uma localidade específica do navegador.
+- **Backend antigo autocorrigido:** abrir o link privado restaura a implantação oficial e remove endereços antigos salvos.
+
 ## Leitura dos arquivos enviados em 22/07/2026
 
 - `LOCACAO ANUAL 2026.jpeg` contém 28 linhas: 23 completas e 5 que ainda precisam de dia de vencimento; duas dessas cinco também não têm valor.
