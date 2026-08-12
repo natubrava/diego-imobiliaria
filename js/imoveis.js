@@ -1,5 +1,5 @@
-import * as api from './api.js?v=20260812-2';
-import { closeModal, debounce, escHtml, formatCurrency, formatDate, initials, localISO, MONTHS_LONG, normalizeText, openModal, parseMoney, renderIcons, setButtonBusy, statusBadge, toast } from './utils.js?v=20260812-2';
+import * as api from './api.js?v=20260812-3';
+import { closeModal, debounce, escHtml, formatCurrency, formatDate, initials, localISO, MONTHS_LONG, normalizeText, openModal, parseMoney, renderIcons, setButtonBusy, statusBadge, toast } from './utils.js?v=20260812-3';
 
 let records = [];
 let activeFilter = 'todos';

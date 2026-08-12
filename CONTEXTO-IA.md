@@ -92,7 +92,7 @@ Acionadores observados após a otimização de 12/08/2026:
 - `getBootstrap` reúne Visão geral, Locações, Grade anual, Vendas e Config em uma única chamada;
 - cada aba da planilha é lida no máximo uma vez durante essa chamada;
 - o backend mantém um cache curto invalidado automaticamente após gravações;
-- o navegador reutiliza o pacote por 60 segundos e compartilha chamadas simultâneas;
+- o navegador reutiliza o pacote por cinco minutos e compartilha chamadas simultâneas; gravações e o botão Atualizar invalidam esse cache imediatamente;
 - leituras podem tentar novamente até três vezes em falhas transitórias; gravações nunca são repetidas automaticamente;
 - uma URL antiga salva no navegador é descartada automaticamente após 404;
 - a abertura deixou de executar um `ping` redundante depois de carregar os dados;

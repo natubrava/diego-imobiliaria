@@ -1,5 +1,5 @@
-import * as api from './api.js?v=20260812-2';
-import { escHtml, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-2';
+import * as api from './api.js?v=20260812-3';
+import { escHtml, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-3';
 
 export async function renderConfiguracoes(container) {
   let config = { emailAlerta:'', diasAntecedencia:5, diasRenovacao:60, alertasAtivos:'true' };
