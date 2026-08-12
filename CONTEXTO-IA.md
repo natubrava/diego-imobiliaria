@@ -93,7 +93,8 @@ Acionadores observados após a otimização de 12/08/2026:
 - cada aba da planilha é lida no máximo uma vez durante essa chamada;
 - o backend mantém um cache curto invalidado automaticamente após gravações;
 - o navegador reutiliza o pacote por cinco minutos e compartilha chamadas simultâneas; gravações e o botão Atualizar invalidam esse cache imediatamente;
-- leituras podem tentar novamente até três vezes em falhas transitórias; gravações nunca são repetidas automaticamente;
+- leituras podem tentar novamente em falhas transitórias; gravações nunca são repetidas automaticamente;
+- se o pacote conjunto estiver indisponível, a tela abandona rapidamente essa tentativa e usa automaticamente a rota leve correspondente;
 - uma URL antiga salva no navegador é descartada automaticamente após 404;
 - a abertura deixou de executar um `ping` redundante depois de carregar os dados;
 - chamadas diretas medidas após a implantação retornaram o pacote completo em 3,7 s na primeira leitura e 1,6 s na leitura em cache;

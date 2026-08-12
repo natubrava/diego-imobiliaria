@@ -83,6 +83,18 @@ if (calls !== 1) throw new Error('O cache da sessão não evitou uma consulta re
 
 api.clearCache();
 calls = 0;
+globalThis.fetch = async (_url, options) => {
+  calls += 1;
+  const action = options.body.get('action');
+  if (action === 'getBootstrap') throw new TypeError('pacote indisponível');
+  if (action === 'getDashboard') return { ok:true, status:200, json:async () => ({ totalAtivos:26 }) };
+  throw new Error(`Consulta inesperada: ${action}`);
+};
+const fallbackDashboard = await api.getDashboard();
+if (calls !== 2 || fallbackDashboard.totalAtivos !== 26) throw new Error('A tela não usou a consulta leve quando o pacote inicial falhou.');
+
+api.clearCache();
+calls = 0;
 globalThis.fetch = async () => { calls += 1; throw new TypeError('offline'); };
 try { await api.saveLocacao({ nome:'Teste' }); } catch {}
 if (calls !== 1) throw new Error('Uma gravação foi repetida e poderia duplicar dados.');

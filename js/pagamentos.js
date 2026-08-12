@@ -1,5 +1,5 @@
-import * as api from './api.js?v=20260812-3';
-import { closeModal, escHtml, formatCurrency, localISO, MONTHS, openModal, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-3';
+import * as api from './api.js?v=20260812-4';
+import { closeModal, escHtml, formatCurrency, localISO, MONTHS, openModal, renderIcons, setButtonBusy, toast } from './utils.js?v=20260812-4';
 
 let selectedYear = new Date().getFullYear();
 
