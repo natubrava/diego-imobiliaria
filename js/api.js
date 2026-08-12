@@ -119,7 +119,7 @@ export function getPrivateAccessLink() {
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function sendRequest(target, body, timeoutMs) {
-  const controller = typeof AbortController === 'function' ? new AbortController() : null;
+  const controller = timeoutMs > 0 && typeof AbortController === 'function' ? new AbortController() : null;
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
   try {
     return await fetch(target, {
@@ -205,7 +205,7 @@ async function request(action, { data, params = {}, method = 'GET', fresh = fals
 }
 
 async function bootstrap(year = new Date().getFullYear()) {
-  try { return await request('getBootstrap', { params:{ year }, maxAttempts:1, timeout:12000 }); }
+  try { return await request('getBootstrap', { params:{ year }, maxAttempts:1, timeout:0 }); }
   catch (error) {
     if (['UNAUTHORIZED','SETUP_REQUIRED'].includes(error.code)) throw error;
     return null;

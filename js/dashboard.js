@@ -1,5 +1,5 @@
-import * as api from './api.js?v=20260812-5';
-import { dateLabel, escHtml, formatCurrency, formatDate, localISO, MONTHS, renderIcons, toast } from './utils.js?v=20260812-5';
+import * as api from './api.js?v=20260812-6';
+import { dateLabel, escHtml, formatCurrency, formatDate, localISO, MONTHS, renderIcons, toast } from './utils.js?v=20260812-6';
 
 export async function renderDashboard(container) {
   const data = await api.getDashboard();
