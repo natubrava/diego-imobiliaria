@@ -4,7 +4,7 @@ const TOKEN_KEY = 'diego_access_token_v2';
 const CACHE_PREFIX = 'diego_read_cache_v3:';
 const CACHE_INDEX_KEY = `${CACHE_PREFIX}index`;
 const CACHE_TTL = 300000;
-const READ_TIMEOUT = 10000;
+const READ_TIMEOUT = 18000;
 const WRITE_TIMEOUT = 22000;
 const MAX_READ_ATTEMPTS = 2;
 const cache = new Map();
@@ -205,30 +205,32 @@ async function request(action, { data, params = {}, method = 'GET', fresh = fals
 }
 
 async function bootstrap(year = new Date().getFullYear()) {
-  try { return await request('getBootstrap', { params:{ year }, maxAttempts:1, timeout:8000 }); }
+  try { return await request('getBootstrap', { params:{ year }, maxAttempts:1, timeout:12000 }); }
   catch (error) {
     if (['UNAUTHORIZED','SETUP_REQUIRED'].includes(error.code)) throw error;
     return null;
   }
 }
 
-export const ping = () => request('ping', { fresh:true, ttl:0 });
-export const getDashboard = async () => (await bootstrap())?.dashboard || request('getDashboard');
+const lightRead = (action, params = {}) => request(action, { params, maxAttempts:1, timeout:25000 });
 
-export const getLocacoes = async () => (await bootstrap())?.locacoes || request('getImoveis');
+export const ping = () => request('ping', { fresh:true, ttl:0 });
+export const getDashboard = async () => (await bootstrap())?.dashboard || lightRead('getDashboard');
+
+export const getLocacoes = async () => (await bootstrap())?.locacoes || lightRead('getImoveis');
 export const getLocacao = id => request('getImovel', { params:{ id } });
 export const saveLocacao = data => request('saveImovel', { method:'POST', data });
 export const importLocacoes = items => request('importLocacoes', { method:'POST', data:{ items } });
 
-export const getFinanceiro = async year => (await bootstrap(Number(year) || new Date().getFullYear()))?.financeiro || request('getFinanceiro', { params:{ year } });
+export const getFinanceiro = async year => (await bootstrap(Number(year) || new Date().getFullYear()))?.financeiro || lightRead('getFinanceiro', { year });
 export const savePagamento = data => request('savePagamento', { method:'POST', data });
 export const deletePagamento = id => request('deletePagamento', { method:'POST', data:{ id } });
 
-export const getVendas = async () => (await bootstrap())?.vendas || request('getVendas');
+export const getVendas = async () => (await bootstrap())?.vendas || lightRead('getVendas');
 export const getVenda = id => request('getVenda', { params:{ id } });
 export const saveVenda = data => request('saveVenda', { method:'POST', data });
 
-export const getConfig = async () => (await bootstrap())?.config || request('getConfig');
+export const getConfig = async () => (await bootstrap())?.config || lightRead('getConfig');
 export const saveConfig = data => request('saveConfig', { method:'POST', data });
 export const runAlertCheck = () => request('runAlertCheck', { method:'POST', data:{} });
 export const setupSystem = () => request('setupSystem', { method:'POST', data:{} });
